@@ -11,27 +11,25 @@
 import java.util.Queue;
 import java.util.LinkedList;
 
+//非迭代实现
 class Solution {
     public boolean isSameTree(TreeNode p, TreeNode q) {
         Queue<TreeNode> p_queue = new LinkedList<TreeNode>();
         Queue<TreeNode> q_queue = new LinkedList<TreeNode>();
         TreeNode p_temp, q_temp;
-        if (p == null && q == null) {
-        	return true;
-        }
         p_queue.offer(p);
         q_queue.offer(q);
         while(!p_queue.isEmpty() && !q_queue.isEmpty()) {
         	p_temp = p_queue.poll();
         	q_temp = q_queue.poll();
-        	if ((p_temp == null && q_temp != null) || (q_temp == null && p_temp != null)) {
-        		return false;
-        	}
-        	if (p_temp == null && q_temp == null) {
+        	if (p_temp == null && q_temp == null) {//都为空的情况单独判断
         		continue;
         	}
-        	if (p_temp.val == q_temp.val) {
-        		return true;
+        	if (p_temp == null || q_temp == null) {//前一个if已排除了两者都为空的情况
+        		return false;
+        	}
+        	if (p_temp.val != q_temp.val) {
+        		return false;
         	}
         	else {
         		p_queue.offer(p_temp.left);
@@ -40,6 +38,17 @@ class Solution {
         		q_queue.offer(q_temp.right);
         	}
         }
-        return false;
+        return true;
     }
 }
+
+/*
+迭代实现
+public boolean isSameTree(TreeNode p, TreeNode q) {
+    if(p == null && q == null) return true;
+    if(p == null || q == null) return false;
+    if(p.val == q.val)
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    return false;
+}
+ */
