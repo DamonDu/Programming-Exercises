@@ -8,32 +8,27 @@
  */
 public class Solution {
 
-    static private Map<Integer, UndirectedGraphNode> map = new HashMap<Integer, UndirectedGraphNode>();
+    private Map<Integer, UndirectedGraphNode> map = new HashMap<Integer, UndirectedGraphNode>();
 
     public UndirectedGraphNode cloneGraph(UndirectedGraphNode node) {
     	return clone(node);
     }
 
+    //迭代实现深度优先
     private UndirectedGraphNode clone(UndirectedGraphNode node) {
     	if (node == null) {
     		return null;
     	}
+
+    	if (map.containsKey(node.label)) {
+        	return map.get(node.label);
+        }
+
     	UndirectedGraphNode temp = new UndirectedGraphNode(node.label);
-        map.put(temp.label, temp);
+    	map.put(temp.label, temp);
+
         for (UndirectedGraphNode n : node.neighbors) {
-        	UndirectedGraphNode next;
-        	if (n.label == node.label) {
-        		temp.neighbors.add(temp);
-        		continue;
-        	}
-        	if (map.containsKey(n.label)) {
-	        	temp.neighbors.add(map.get(n.label));
-	        }
-	        else {
-	        	next = clone(n);
-	        	temp.neighbors.add(next);
-	        	map.put(temp.label, temp);
-	        }
+        	temp.neighbors.add(clone(n));
         }
         return temp;
     } 
