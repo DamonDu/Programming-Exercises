@@ -32,8 +32,9 @@ class Solution {
 
     	for (Integer l: leaf) {
     		ArrayList<Integer> temp = new ArrayList<Integer>();
+    		int[] visited = new int[n];
     		temp.add(l);
-    		height = explore(temp, graph, height);
+    		height = explore(temp, graph, height, visited);
     		tag = 0;
     	}
 
@@ -54,13 +55,17 @@ class Solution {
     	return minIndex;
     }
 
-    private int[] explore(ArrayList<Integer> explored, ArrayList<Integer>[] graph, int[] height) {
+    private int[] explore(ArrayList<Integer> explored, ArrayList<Integer>[] graph, int[] height, int visited[]) {
     	tag++;
     	ArrayList<Integer> next = new ArrayList<Integer>();
+    	if (explored.isEmpty()) {
+    		return height;
+    	}
     	for (Integer e : explored) {
     		if (height[e] < tag) {
     			height[e] = tag;
     		}
+    		visited[e] = 1;
     	}
     	for (Integer e : explored) {
     		for (Integer node : graph[e]) {
@@ -69,7 +74,7 @@ class Solution {
     			}
     		}
     	}
-    	explore(next, graph, height);
+    	explore(next, graph, height, visited);
     	return height;
     }
 }
