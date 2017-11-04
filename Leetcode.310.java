@@ -4,13 +4,16 @@ class Solution {
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
         ArrayList<Integer>[] graph = new ArrayList[n];
         ArrayList<Integer> leaf = new ArrayList<Integer>();
+        ArrayList<Integer> temp;
         int minHeight[] = new int[n];
-        int[] num = new int[n];
+        int[] edgeNum = new int[n];
+        int[] deleted = new int[n];
+        int num = n;
         //ArrayList<Integer> explore = new ArrayList<Integer>();
 
         for (int i = 0; i < edges.length; i++) {
-        	num[edges[i][0]]++;
-        	num[edges[i][1]]++;
+        	edgeNum[edges[i][0]]++;
+        	edgeNum[edges[i][1]]++;
 
         	if (graph[edges[i][0]] == null) {
         		graph[edges[i][0]] = new ArrayList<Integer>();
@@ -23,58 +26,37 @@ class Solution {
         }
 
     	for (int i = 0; i < n; i++) {
-    		if (num[i] == 1) {
-    			leaf.add(i);
+    		if (edgeNum[i] == 1) {
+    			deleted[i] = 1;
+                for (Integer e : graph[i]) {
+                    edgeNum[e]--;
+                    if (!leaf.contains(e))
+                        leaf.add(e);
+                }
+                num--;
     		}
     	}
 
-    	int[] height = new int[n];
+        while (num > 2) {
+            for (Integer i : leaf) {
+                if (edgeNum[i] != 1) {
+                    leaf.remove(i);
+                }
+            }
+            temp = new ArrayList<Integer>();
+            for (Integer i : leaf) {
+                deleted[i] = 1;
+                for (Integer e : graph[i]) {
+                    edgeNum[e]--;
+                    if (!temp.contains(e))
+                        temp.add(e);
+                }
+                num--;
+            }
+            leaf = temp;
+            temp = null;
+        }
 
-    	for (Integer l: leaf) {
-    		ArrayList<Integer> temp = new ArrayList<Integer>();
-    		int[] visited = new int[n];
-    		temp.add(l);
-    		height = explore(temp, graph, height, visited);
-    		tag = 0;
-    	}
-
-    	int min = Integer.MAX_VALUE;
-    	ArrayList<Integer> minIndex = new ArrayList<>();
-
-    	for (int i = 0; i < n; i++) {
-    		if (height[i] < min) {
-    			min = height[i];
-    			minIndex.clear();
-    			minIndex.add(i);
-    		}
-    		else if (height[i] == min) {
-    			minIndex.add(i);
-    		}
-    	}
-
-    	return minIndex;
-    }
-
-    private int[] explore(ArrayList<Integer> explored, ArrayList<Integer>[] graph, int[] height, int visited[]) {
-    	tag++;
-    	ArrayList<Integer> next = new ArrayList<Integer>();
-    	if (explored.isEmpty()) {
-    		return height;
-    	}
-    	for (Integer e : explored) {
-    		if (height[e] < tag) {
-    			height[e] = tag;
-    		}
-    		visited[e] = 1;
-    	}
-    	for (Integer e : explored) {
-    		for (Integer node : graph[e]) {
-    			if (visited[node] == 0) {
-    				next.add(node);
-    			}
-    		}
-    	}
-    	explore(next, graph, height, visited);
-    	return height;
+        return leaf;
     }
 }
