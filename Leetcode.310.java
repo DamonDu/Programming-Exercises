@@ -38,15 +38,21 @@ class Solution {
     	}
 
         while (num > 2) {
-            for (Integer i : leaf) {
-                if (edgeNum[i] != 1) {
+            for (int i = 0; i < leaf.size(); i++) {
+                if (leaf.get(i) == null) {
+                    continue;
+                }
+                if (edgeNum[leaf.get(i)] != 1) {
                     leaf.remove(i);
                 }
             }
             temp = new ArrayList<Integer>();
-            for (Integer i : leaf) {
-                deleted[i] = 1;
-                for (Integer e : graph[i]) {
+            for (int i = 0; i < leaf.size(); i++) {
+                if (leaf.get(i) == null) {
+                    continue;
+                }
+                deleted[leaf.get(i)] = 1;
+                for (Integer e : graph[leaf.get(i)]) {
                     edgeNum[e]--;
                     if (!temp.contains(e))
                         temp.add(e);
